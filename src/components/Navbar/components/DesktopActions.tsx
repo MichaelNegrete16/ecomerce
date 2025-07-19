@@ -1,13 +1,14 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../redux/store";
 import { toggleCart } from "../../../redux/slices/cartSlice";
 import styles from "../Navbar.module.css";
 import CartIcon from "./icons/CartIcon";
+import useAppDispatch from "@/redux/useAppDisppatch";
+import useAppSelector from "@/redux/useAppSelector";
+import { selectCartItemCount } from "@/redux/slices/cart.selector";
 
 const DesktopActions: React.FC = () => {
-  const dispatch = useDispatch();
-  const { itemCount } = useSelector((state: RootState) => state.cart);
+  const dispatch = useAppDispatch();
+  const itemsCount = useAppSelector(selectCartItemCount);
 
   const handleCartClick = () => {
     dispatch(toggleCart());
@@ -17,8 +18,8 @@ const DesktopActions: React.FC = () => {
     <div className={styles["desktop-actions"]}>
       <button className={styles["icon-button"]} onClick={handleCartClick}>
         <CartIcon />
-        {itemCount > 0 && (
-          <span className={styles["cart-badge"]}>{itemCount}</span>
+        {itemsCount > 0 && (
+          <span className={styles["cart-badge"]}>{itemsCount}</span>
         )}
       </button>
     </div>

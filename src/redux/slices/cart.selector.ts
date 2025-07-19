@@ -1,0 +1,25 @@
+import { createSelector } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { CartState } from "./cart.types";
+
+export const selectCart = (state: RootState) => state.cart;
+
+export const selectCartItems = createSelector(
+  selectCart,
+  (card: CartState) => card.items
+);
+
+export const selectCartTotal = createSelector(
+  selectCart,
+  (cart: CartState) => cart.total
+);
+
+export const selectCartItemCount = createSelector(
+  selectCart,
+  (cart: CartState) => cart.itemCount
+);
+
+export const selectIsCartOpen = createSelector(
+  selectCart,
+  (cart: CartState) => cart.isOpen
+);

@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "../ProductCard.module.css";
+import { formatPrice } from "@/utils/FromatPrice";
 
 interface ProductPriceProps {
   price: number;
@@ -14,14 +15,6 @@ const ProductPrice: React.FC<ProductPriceProps> = ({
   discount,
   currency = "$",
 }) => {
-  const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
   return (
     <div className={styles["product-price-container"]}>
       <div className={styles["product-price"]}>

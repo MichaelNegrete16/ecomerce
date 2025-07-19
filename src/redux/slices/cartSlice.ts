@@ -1,26 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Product } from "../../components/ProductCard/types";
+import { CartItem, CartState } from "./cart.types";
+import { Product } from "@/components/ProductCard/types";
 
-export interface CartItem {
-  id: string;
-  product: Product;
-  quantity: number;
-  addedAt: Date;
-}
-
-export interface CartState {
-  items: CartItem[];
-  total: number;
-  itemCount: number;
-  isOpen: boolean;
-}
-
-const initialState: CartState = {
+const initialState = {
   items: [],
   total: 0,
   itemCount: 0,
   isOpen: false,
-};
+} as CartState;
 
 const calculateTotals = (items: CartItem[]) => {
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);

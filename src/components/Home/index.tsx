@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/slices/cartSlice";
 import ProductGrid from "../ProductCard/ProductGrid";
 import ProductModal from "../ProductModal";
 import { Product } from "../ProductCard/types";
 import { getProducts } from "../ProductCard/data/mockProducts";
+import useAppDispatch from "@/redux/useAppDisppatch";
 
 const HomeAplication = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoriteProducts, setFavoriteProducts] = useState<string[]>([]);

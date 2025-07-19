@@ -1,6 +1,4 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../redux/store";
 import {
   closeCart,
   removeFromCart,
@@ -10,12 +8,23 @@ import styles from "../Navbar.module.css";
 import CloseIcon from "../components/icons/CloseIcon";
 import MinusIcon from "../../ProductModal/components/icons/MinusIcon";
 import PlusIcon from "../../ProductModal/components/icons/PlusIcon";
+import Link from "next/link";
+import useAppDispatch from "@/redux/useAppDisppatch";
+import useAppSelector from "@/redux/useAppSelector";
+import {
+  selectCartItemCount,
+  selectCartItems,
+  selectCartTotal,
+  selectIsCartOpen,
+} from "@/redux/slices/cart.selector";
+import { formatPrice } from "@/utils/FromatPrice";
 
 const CartSidebar: React.FC = () => {
-  const dispatch = useDispatch();
-  const { items, total, itemCount, isOpen } = useSelector(
-    (state: RootState) => state.cart
-  );
+  const dispatch = useAppDispatch();
+  const items = useAppSelector(selectCartItems);
+  const total = useAppSelector(selectCartTotal);
+  const itemCount = useAppSelector(selectCartItemCount);
+  const isOpen = useAppSelector(selectIsCartOpen);
 
   const handleClose = () => {
     dispatch(closeCart());
@@ -27,14 +36,6 @@ const CartSidebar: React.FC = () => {
 
   const handleRemoveItem = (id: string) => {
     dispatch(removeFromCart(id));
-  };
-
-  const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
   };
 
   if (!isOpen) return null;
@@ -206,10 +207,15 @@ const CartSidebar: React.FC = () => {
                     <span>{formatPrice(total)}</span>
                   </div>
                 </div>
-
-                <button className={styles["checkout-button"]} type="button">
-                  Proceder al Pago
-                </button>
+                <Link href={"/checkout"}>
+                  <button
+                    className={styles["checkout-button"]}
+                    type="button"
+                    onClick={handleClose}
+                  >
+                    Proceder al Pago
+                  </button>
+                </Link>
               </div>
             </>
           )}

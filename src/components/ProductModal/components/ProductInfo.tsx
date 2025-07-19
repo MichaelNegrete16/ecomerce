@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../ProductModal.module.css";
 import StarIcon from "@/components/ProductCard/components/icons/StarIcon";
+import { formatPrice } from "@/utils/FromatPrice";
 
 interface ProductInfoProps {
   product: {
@@ -17,14 +18,6 @@ interface ProductInfoProps {
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
-  const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
     return Array.from({ length: 5 }, (_, index) => (

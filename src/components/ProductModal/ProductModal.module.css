@@ -1,4 +1,3 @@
-/* Product Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -337,6 +336,8 @@
 .rating-stars-modal {
   display: flex;
   gap: 0.25rem;
+  height: 10px;
+  color: #3b82f6;
 }
 
 .rating-text-modal {
