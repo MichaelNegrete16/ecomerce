@@ -11,6 +11,8 @@ const initialState = {
   userInfo: initialDataUserInfo,
   termsAccepted: false,
   privacyAccepted: false,
+  acceptanceToken: "",
+  personalToken: "",
 } as CartState;
 
 const calculateTotals = (items: CartItem[]) => {
@@ -106,6 +108,14 @@ const cartSlice = createSlice({
     setPrivacyAccepted: (state, action: PayloadAction<boolean>) => {
       state.privacyAccepted = action.payload;
     },
+
+    setAcceptanceToken: (state, action: PayloadAction<string>) => {
+      state.acceptanceToken = action.payload;
+    },
+
+    setPersonalToken: (state, action: PayloadAction<string>) => {
+      state.personalToken = action.payload;
+    },
   },
 });
 
@@ -120,6 +130,8 @@ export const {
   setUserInfo,
   setTermsAccepted,
   setPrivacyAccepted,
+  setAcceptanceToken,
+  setPersonalToken,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

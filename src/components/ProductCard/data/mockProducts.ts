@@ -7,7 +7,7 @@ export const mockProducts: Product[] = [
     description:
       "Smartphone de última generación con cámara de 108MP, pantalla AMOLED de 6.8 pulgadas y procesador octa-core.",
     category: "Electrónicos",
-    price: 899.99,
+    price: 112899.99,
     originalPrice: 1199.99,
     image:
       "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop&crop=center",
@@ -31,7 +31,7 @@ export const mockProducts: Product[] = [
     description:
       "Laptop gaming con RTX 4070, 32GB RAM, SSD 1TB y pantalla 144Hz perfecta para gaming profesional.",
     category: "Computadoras",
-    price: 1499.99,
+    price: 4221499.99,
     originalPrice: 1799.99,
     image:
       "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=400&h=400&fit=crop&crop=center",
@@ -55,7 +55,7 @@ export const mockProducts: Product[] = [
     description:
       "Auriculares inalámbricos con cancelación de ruido activa, 30 horas de batería y sonido Hi-Fi.",
     category: "Audio",
-    price: 199.99,
+    price: 5123199.99,
     image:
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&crop=center",
     images: [

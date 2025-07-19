@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import styles from "../Form.module.css";
 import useAppDispatch from "@/redux/useAppDisppatch";
-import { setPrivacyAccepted, setTermsAccepted } from "@/redux/slices/cartSlice";
+import {
+  setAcceptanceToken,
+  setPersonalToken,
+  setPrivacyAccepted,
+  setTermsAccepted,
+} from "@/redux/slices/cartSlice";
 import {
   IGetDataMerchant,
   useLazyGetMerchantDataQuery,
@@ -40,6 +45,15 @@ const TermsAndCondition = () => {
           onChange={(e) => {
             setAcceptTerms(e.target.checked);
             dispatch(setTermsAccepted(e.target.checked));
+            if (e.target.checked) {
+              dispatch(
+                setAcceptanceToken(
+                  dataMerchant?.presigned_acceptance.acceptance_token || ""
+                )
+              );
+            } else {
+              dispatch(setAcceptanceToken(""));
+            }
           }}
           required
         />
@@ -65,6 +79,16 @@ const TermsAndCondition = () => {
           onChange={(e) => {
             setAcceptPrivacy(e.target.checked);
             dispatch(setPrivacyAccepted(e.target.checked));
+            if (e.target.checked) {
+              dispatch(
+                setPersonalToken(
+                  dataMerchant?.presigned_personal_data_auth.acceptance_token ||
+                    ""
+                )
+              );
+            } else {
+              dispatch(setPersonalToken(""));
+            }
           }}
           required
         />

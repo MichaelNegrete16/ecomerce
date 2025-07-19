@@ -38,3 +38,13 @@ export const selectPrivacyAccepted = createSelector(
   selectCart,
   (cart: CartState) => cart.privacyAccepted
 );
+
+export const selectAcceptanceToken = createSelector(
+  selectCart,
+  (cart: CartState) => cart.acceptanceToken
+);
+
+export const selectPersonalToken = createSelector(
+  selectCart,
+  (cart: CartState) => cart.personalToken
+);

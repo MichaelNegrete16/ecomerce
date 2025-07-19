@@ -32,4 +32,6 @@ export interface CartState {
   userInfo: IUserInfo;
   termsAccepted: boolean;
   privacyAccepted: boolean;
+  acceptanceToken: string;
+  personalToken: string;
 }

@@ -3,8 +3,10 @@ import styles from "../Form.module.css";
 import { formatPrice } from "@/utils/FromatPrice";
 import useAppSelector from "@/redux/useAppSelector";
 import {
+  selectAcceptanceToken,
   selectCartItems,
   selectCartTotal,
+  selectPersonalToken,
   selectPrivacyAccepted,
   selectTermsAccepted,
   selectUserInfo,
@@ -16,6 +18,7 @@ import {
 } from "@/utils/DetecTypeCard";
 import { initialDataPayment } from "./PaymentMethod.constant";
 import TermsAndCondition from "../TermsAndCondition";
+import { useCreateTransactionMutation } from "@/redux/slices/cart.api";
 
 interface PaymentFormProps {
   onBack: () => void;
@@ -30,7 +33,10 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
   const acceptTerms = useAppSelector(selectTermsAccepted);
   const acceptPrivacy = useAppSelector(selectPrivacyAccepted);
   const userInfo = useAppSelector(selectUserInfo);
+  const accepToken = useAppSelector(selectAcceptanceToken);
+  const personalToken = useAppSelector(selectPersonalToken);
   const [cardType, setCardType] = useState<CardType>("unknown");
+  const [createTransaction] = useCreateTransactionMutation();
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\s/g, "");
@@ -48,17 +54,67 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleExpiryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ""); // Solo números
 
-    if (!acceptTerms || !acceptPrivacy) {
-      alert(
-        "Debes aceptar los términos y condiciones y la política de privacidad para continuar."
-      );
-      return;
+    if (value.length >= 2) {
+      const month = value.slice(0, 2);
+      const year = value.slice(2, 4);
+
+      if (parseInt(month) > 12) {
+        value = "12" + year;
+      }
+
+      value = month + (year ? "/" + year : "");
     }
 
-    alert("¡Pago procesado exitosamente!");
+    if (value.length <= 5) {
+      setForm((prev) => ({ ...prev, expiryDate: value }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!acceptTerms || !acceptPrivacy) {
+        alert(
+          "Debes aceptar los términos y condiciones y la política de privacidad para continuar."
+        );
+        return;
+      }
+
+      // Validar formato de fecha
+      const expiryParts = form.expiryDate.split("/");
+      if (
+        expiryParts.length !== 2 ||
+        expiryParts[0].length !== 2 ||
+        expiryParts[1].length !== 2
+      ) {
+        alert("Por favor, ingresa una fecha de vencimiento válida (MM/AA)");
+        return;
+      }
+
+      const month = expiryParts[0];
+      const year = expiryParts[1]; // Mantener solo 2 dígitos (ej: "29" para 2029)
+
+      await createTransaction({
+        number: form.cardNumber.replace(/\s/g, ""),
+        exp_month: month,
+        exp_year: year,
+        cvc: form.cvv,
+        card_holder: form.cardName,
+        customer_email: userInfo.email,
+        acceptance_token: accepToken,
+        accept_personal_auth: personalToken,
+        amount_in_cents: total * 100,
+        currency: "COP",
+      }).unwrap();
+
+      alert("¡Pago procesado exitosamente!");
+    } catch (error) {
+      console.log("Error al procesar el pago:", error);
+      alert("Error al procesar el pago. Por favor, inténtalo de nuevo.");
+    }
   };
 
   return (
@@ -103,7 +159,7 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
               type="text"
               id="expiryDate"
               value={form.expiryDate}
-              onChange={handleChange}
+              onChange={handleExpiryDateChange}
               name="expiryDate"
               placeholder="MM/AA"
               maxLength={5}
