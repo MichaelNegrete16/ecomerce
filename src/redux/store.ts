@@ -1,8 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { api } from "./RTKApi";
+import cartReducer from "./slices/cartSlice";
 
 const rootReducer = combineReducers({
   // Add your reducers here
+  cart: cartReducer,
   [api.reducerPath]: api.reducer,
 });
 

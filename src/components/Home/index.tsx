@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/slices/cartSlice";
 import ProductGrid from "../ProductCard/ProductGrid";
 import ProductModal from "../ProductModal";
 import { Product } from "../ProductCard/types";
 import { getProducts } from "../ProductCard/data/mockProducts";
 
 const HomeAplication = () => {
+  const dispatch = useDispatch();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoriteProducts, setFavoriteProducts] = useState<string[]>([]);
@@ -28,13 +31,12 @@ const HomeAplication = () => {
   }, []);
 
   const handleAddToCart = (product: Product, quantity: number = 1) => {
-    console.log("Agregando al carrito:", product.title, "Cantidad:", quantity);
-    // Aquí integrarías con Redux o tu estado global
-    // Por ahora solo mostramos un mensaje de confirmación
-    alert(
-      `¡${product.title} agregado al carrito! (${quantity} unidad${
-        quantity > 1 ? "es" : ""
-      })`
+    dispatch(addToCart({ product, quantity }));
+    console.log(
+      "Producto agregado al carrito:",
+      product.title,
+      "Cantidad:",
+      quantity
     );
   };
 
