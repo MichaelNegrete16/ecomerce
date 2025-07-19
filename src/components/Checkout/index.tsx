@@ -6,17 +6,30 @@ import {
   selectCartTotal,
 } from "@/redux/slices/cart.selector";
 import useAppSelector from "@/redux/useAppSelector";
-import React from "react";
+import React, { useState } from "react";
 import styles from "./checkout.module.css";
 import Link from "next/link";
 import IndexContainer from "./Items";
 import { formatPrice } from "@/utils/FromatPrice";
-import FormSubmit from "./Form";
+import PaymentForm from "./Form/PaymenMethod/PaymentForm";
+import UserInfo from "./Form/UserInfo";
 
 const CheckoutModule = () => {
   const items = useAppSelector(selectCartItems);
   const total = useAppSelector(selectCartTotal);
   const itemCount = useAppSelector(selectCartItemCount);
+
+  const [currentStep, setCurrentStep] = useState<"shipping" | "payment">(
+    "shipping"
+  );
+
+  const handleContinueToPayment = () => {
+    setCurrentStep("payment");
+  };
+
+  const handleBackToShipping = () => {
+    setCurrentStep("shipping");
+  };
 
   return (
     <div className={styles.container}>
@@ -61,7 +74,11 @@ const CheckoutModule = () => {
           )}
         </div>
 
-        <FormSubmit />
+        {currentStep === "shipping" ? (
+          <UserInfo onContinue={handleContinueToPayment} />
+        ) : (
+          <PaymentForm onBack={handleBackToShipping} />
+        )}
       </div>
     </div>
   );

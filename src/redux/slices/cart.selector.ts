@@ -23,3 +23,18 @@ export const selectIsCartOpen = createSelector(
   selectCart,
   (cart: CartState) => cart.isOpen
 );
+
+export const selectUserInfo = createSelector(
+  selectCart,
+  (cart: CartState) => cart.userInfo
+);
+
+export const selectTermsAccepted = createSelector(
+  selectCart,
+  (cart: CartState) => cart.termsAccepted
+);
+
+export const selectPrivacyAccepted = createSelector(
+  selectCart,
+  (cart: CartState) => cart.privacyAccepted
+);

@@ -1,17 +1,35 @@
-import React from "react";
-import styles from "./Form.module.css";
-import { formatPrice } from "@/utils/FromatPrice";
+import React, { useState } from "react";
+import styles from "../Form.module.css";
 import useAppSelector from "@/redux/useAppSelector";
-import { selectCartItems, selectCartTotal } from "@/redux/slices/cart.selector";
+import { selectCartItems } from "@/redux/slices/cart.selector";
+import { initialDataUserInfo } from "./UserInfo.constant";
+import useAppDispatch from "@/redux/useAppDisppatch";
+import { setUserInfo } from "@/redux/slices/cartSlice";
 
-const FormSubmit = () => {
+interface UserInfoFormProps {
+  onContinue: () => void;
+}
+
+const UserInfo = ({ onContinue }: UserInfoFormProps) => {
+  const dispatch = useAppDispatch();
   const items = useAppSelector(selectCartItems);
-  const total = useAppSelector(selectCartTotal);
+  const [form, setForm] = useState(initialDataUserInfo);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch(setUserInfo(form));
+    onContinue();
+  };
   return (
-    <div className={styles.checkoutForm}>
+    <div className={styles.userInfoForm}>
       <h2>Información de Envío</h2>
 
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -19,6 +37,8 @@ const FormSubmit = () => {
             id="email"
             name="email"
             placeholder="tu@email.com"
+            value={form.email}
+            onChange={handleChange}
             required
           />
         </div>
@@ -29,8 +49,10 @@ const FormSubmit = () => {
             <input
               type="text"
               id="firstName"
-              name="firstName"
+              name="firstname"
               placeholder="Juan"
+              value={form.firstname}
+              onChange={handleChange}
               required
             />
           </div>
@@ -39,8 +61,10 @@ const FormSubmit = () => {
             <input
               type="text"
               id="lastName"
-              name="lastName"
+              name="lastname"
               placeholder="Pérez"
+              value={form.lastname}
+              onChange={handleChange}
               required
             />
           </div>
@@ -53,6 +77,8 @@ const FormSubmit = () => {
             id="address"
             name="address"
             placeholder="Calle Principal 123"
+            value={form.address}
+            onChange={handleChange}
             required
           />
         </div>
@@ -64,7 +90,9 @@ const FormSubmit = () => {
               type="text"
               id="city"
               name="city"
-              placeholder="Madrid"
+              placeholder="Bogotá"
+              value={form.city}
+              onChange={handleChange}
               required
             />
           </div>
@@ -72,9 +100,11 @@ const FormSubmit = () => {
             <label htmlFor="postalCode">Código Postal</label>
             <input
               type="text"
-              id="postalCode"
-              name="postalCode"
-              placeholder="28001"
+              id="postalcode"
+              name="postalcode"
+              value={form.postalcode}
+              onChange={handleChange}
+              placeholder="11001"
               required
             />
           </div>
@@ -86,7 +116,9 @@ const FormSubmit = () => {
             type="tel"
             id="phone"
             name="phone"
-            placeholder="+34 123 456 789"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="+57 300 123 4567"
             required
           />
         </div>
@@ -94,10 +126,10 @@ const FormSubmit = () => {
         <div className={styles.formActions}>
           <button
             type="submit"
-            className={styles.submitButton}
+            className={styles.continueButton}
             disabled={items.length === 0}
           >
-            Confirmar Pedido ({formatPrice(total)})
+            Continuar al Pago
           </button>
         </div>
       </form>
@@ -105,4 +137,4 @@ const FormSubmit = () => {
   );
 };
 
-export default FormSubmit;
+export default UserInfo;

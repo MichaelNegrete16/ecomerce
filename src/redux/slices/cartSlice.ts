@@ -1,12 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CartItem, CartState } from "./cart.types";
+import { CartItem, CartState, IUserInfo } from "./cart.types";
 import { Product } from "@/components/ProductCard/types";
+import { initialDataUserInfo } from "@/components/Checkout/Form/UserInfo/UserInfo.constant";
 
 const initialState = {
   items: [],
   total: 0,
   itemCount: 0,
   isOpen: false,
+  userInfo: initialDataUserInfo,
+  termsAccepted: false,
+  privacyAccepted: false,
 } as CartState;
 
 const calculateTotals = (items: CartItem[]) => {
@@ -90,6 +94,18 @@ const cartSlice = createSlice({
     closeCart: (state) => {
       state.isOpen = false;
     },
+
+    setUserInfo: (state, action: PayloadAction<IUserInfo>) => {
+      state.userInfo = action.payload;
+    },
+
+    setTermsAccepted: (state, action: PayloadAction<boolean>) => {
+      state.termsAccepted = action.payload;
+    },
+
+    setPrivacyAccepted: (state, action: PayloadAction<boolean>) => {
+      state.privacyAccepted = action.payload;
+    },
   },
 });
 
@@ -101,6 +117,9 @@ export const {
   toggleCart,
   openCart,
   closeCart,
+  setUserInfo,
+  setTermsAccepted,
+  setPrivacyAccepted,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
