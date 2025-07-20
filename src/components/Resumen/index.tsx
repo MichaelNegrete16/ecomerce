@@ -4,47 +4,7 @@ import styles from "./Resumen.module.css";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { formatPrice } from "@/utils/FromatPrice";
-
-interface IItems {
-  id: string;
-  product: {
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    price: number;
-    originalPrice: number;
-    image: string;
-    rating: {
-      rate: number;
-      count: number;
-    };
-    badge: string;
-    discount: number;
-    inStock: boolean;
-    featured: boolean;
-  };
-  quantity: 1;
-  addedAt: "2025-07-19T23:59:30.312Z";
-}
-
-interface TransactionData {
-  id: string;
-  amount: number;
-  items: IItems[];
-  userInfo: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    address: string;
-    city: string;
-    postalCode: string;
-    phone: string;
-  };
-  cardLastFour: string;
-  date: string;
-  status: string;
-}
+import { TransactionData } from "./Resumen.types";
 
 const ResumenPayment = () => {
   const searchParams = useSearchParams();
@@ -52,6 +12,12 @@ const ResumenPayment = () => {
   const [transactionData, setTransactionData] =
     useState<TransactionData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!transactionId) {
+      window.location.href = "/";
+    }
+  }, [transactionId]);
 
   useEffect(() => {
     // Simular carga y obtener datos del localStorage
