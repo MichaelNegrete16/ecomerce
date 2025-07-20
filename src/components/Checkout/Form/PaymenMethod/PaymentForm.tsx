@@ -36,6 +36,7 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
   const accepToken = useAppSelector(selectAcceptanceToken);
   const personalToken = useAppSelector(selectPersonalToken);
   const [cardType, setCardType] = useState<CardType>("unknown");
+  const [isLoading, setIsLoading] = useState(false);
   const [createTransaction] = useCreateTransactionMutation();
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,11 +76,14 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
       if (!acceptTerms || !acceptPrivacy) {
         alert(
           "Debes aceptar los términos y condiciones y la política de privacidad para continuar."
         );
+        setIsLoading(false);
         return;
       }
 
@@ -91,13 +95,14 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
         expiryParts[1].length !== 2
       ) {
         alert("Por favor, ingresa una fecha de vencimiento válida (MM/AA)");
+        setIsLoading(false);
         return;
       }
 
       const month = expiryParts[0];
-      const year = expiryParts[1]; // Mantener solo 2 dígitos (ej: "29" para 2029)
+      const year = expiryParts[1];
 
-      await createTransaction({
+      const response = await createTransaction({
         number: form.cardNumber.replace(/\s/g, ""),
         exp_month: month,
         exp_year: year,
@@ -110,99 +115,129 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
         currency: "COP",
       }).unwrap();
 
-      alert("¡Pago procesado exitosamente!");
+      const transactionData = {
+        id: response.bill_id || Date.now().toString(),
+        amount: total,
+        items: items,
+        userInfo: userInfo,
+        cardLastFour: form.cardNumber.slice(-4),
+        date: new Date().toISOString(),
+        status: "completed",
+      };
+
+      localStorage.setItem("lastTransaction", JSON.stringify(transactionData));
+
+      // Redirigir al resumen de pago
+      window.location.href = `/payment-summary?id=${transactionData.id}`;
     } catch (error) {
       console.log("Error al procesar el pago:", error);
       alert("Error al procesar el pago. Por favor, inténtalo de nuevo.");
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className={styles.paymentForm}>
-      <h2>Información de Pago</h2>
-
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.formGroup}>
-          <label htmlFor="cardNumber">Número de Tarjeta</label>
-          <div className={styles.cardInputContainer}>
-            <input
-              type="text"
-              id="cardNumber"
-              name="cardNumber"
-              value={form.cardNumber}
-              onChange={handleCardNumberChange}
-              placeholder="1234 5678 9012 3456"
-              maxLength={19}
-              required
-            />
-            <div className={styles.cardIcon}>{getCardIcon(cardType)()}</div>
+    <>
+      {isLoading && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingContent}>
+            <div className={styles.spinner}></div>
+            <h3>Procesando tu pago...</h3>
+            <p>Por favor, no cierres esta ventana ni actualices la página</p>
           </div>
         </div>
+      )}
 
-        <div className={styles.formGroup}>
-          <label htmlFor="cardName">Nombre en la Tarjeta</label>
-          <input
-            type="text"
-            id="cardName"
-            name="cardName"
-            value={form.cardName}
-            onChange={handleChange}
-            placeholder="Juan Pérez"
-            required
-          />
-        </div>
+      <div className={styles.paymentForm}>
+        <h2>Información de Pago</h2>
 
-        <div className={styles.formRow}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <label htmlFor="expiryDate">Fecha de Vencimiento</label>
-            <input
-              type="text"
-              id="expiryDate"
-              value={form.expiryDate}
-              onChange={handleExpiryDateChange}
-              name="expiryDate"
-              placeholder="MM/AA"
-              maxLength={5}
-              required
-            />
+            <label htmlFor="cardNumber">Número de Tarjeta</label>
+            <div className={styles.cardInputContainer}>
+              <input
+                type="text"
+                id="cardNumber"
+                name="cardNumber"
+                value={form.cardNumber}
+                onChange={handleCardNumberChange}
+                placeholder="1234 5678 9012 3456"
+                maxLength={19}
+                required
+              />
+              <div className={styles.cardIcon}>{getCardIcon(cardType)()}</div>
+            </div>
           </div>
+
           <div className={styles.formGroup}>
-            <label htmlFor="cvv">CVV</label>
+            <label htmlFor="cardName">Nombre en la Tarjeta</label>
             <input
               type="text"
-              id="cvv"
-              name="cvv"
-              value={form.cvv}
+              id="cardName"
+              name="cardName"
+              value={form.cardName}
               onChange={handleChange}
-              placeholder="123"
-              maxLength={4}
+              placeholder="Juan Pérez"
               required
             />
           </div>
-        </div>
 
-        <div className={styles.securityInfo}>
-          <p className={styles.securityText}>
-            🔒 Tu información está protegida con encriptación SSL
-          </p>
-        </div>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="expiryDate">Fecha de Vencimiento</label>
+              <input
+                type="text"
+                id="expiryDate"
+                value={form.expiryDate}
+                onChange={handleExpiryDateChange}
+                name="expiryDate"
+                placeholder="MM/AA"
+                maxLength={5}
+                required
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="cvv">CVV</label>
+              <input
+                type="text"
+                id="cvv"
+                name="cvv"
+                value={form.cvv}
+                onChange={handleChange}
+                placeholder="123"
+                maxLength={4}
+                required
+              />
+            </div>
+          </div>
 
-        <TermsAndCondition />
+          <div className={styles.securityInfo}>
+            <p className={styles.securityText}>
+              🔒 Tu información está protegida con encriptación SSL
+            </p>
+          </div>
 
-        <div className={styles.formActions}>
-          <button type="button" onClick={onBack} className={styles.backButton}>
-            ← Volver
-          </button>
-          <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={items.length === 0 || !acceptTerms || !acceptPrivacy}
-          >
-            Procesar Pago ({formatPrice(total)})
-          </button>
-        </div>
-      </form>
-    </div>
+          <TermsAndCondition />
+
+          <div className={styles.formActions}>
+            <button
+              type="button"
+              onClick={onBack}
+              className={styles.backButton}
+            >
+              ← Volver
+            </button>
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={items.length === 0 || !acceptTerms || !acceptPrivacy}
+            >
+              Procesar Pago ({formatPrice(total)})
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 
