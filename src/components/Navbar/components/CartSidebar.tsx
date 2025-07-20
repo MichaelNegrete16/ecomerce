@@ -3,7 +3,7 @@ import {
   closeCart,
   removeFromCart,
   updateQuantity,
-} from "../../../redux/slices/cartSlice";
+} from "../../../redux/slices/cart/cartSlice";
 import styles from "../Navbar.module.css";
 import CloseIcon from "../components/icons/CloseIcon";
 import MinusIcon from "../../ProductModal/components/icons/MinusIcon";
@@ -16,7 +16,7 @@ import {
   selectCartItems,
   selectCartTotal,
   selectIsCartOpen,
-} from "@/redux/slices/cart.selector";
+} from "@/redux/slices/cart/cart.selector";
 import { formatPrice } from "@/utils/FromatPrice";
 
 const CartSidebar: React.FC = () => {

@@ -1,8 +1,9 @@
 import { Product } from "@/components/ProductCard/types";
+import { IGetDataArticle } from "../articles/article.api";
 
 export interface CartItem {
-  id: string;
-  product: Product;
+  id: number;
+  product: IGetDataArticle;
   quantity: number;
   addedAt: Date;
 }

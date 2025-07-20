@@ -2,12 +2,12 @@ import React from "react";
 import styles from "../ProductCard.module.css";
 import CartPlusIcon from "./icons/CartPlusIcon";
 import EyeIcon from "./icons/EyeIcon";
-import { Product } from "../types";
+import { IGetDataArticle } from "@/redux/slices/articles/article.api";
 
 interface ProductActionsProps {
-  product: Product;
-  onAddToCart?: (product: Product) => void;
-  onViewDetails?: (product: Product) => void;
+  product: IGetDataArticle;
+  onAddToCart?: (product: IGetDataArticle) => void;
+  onViewDetails?: (product: IGetDataArticle) => void;
   showActions?: boolean;
 }
 

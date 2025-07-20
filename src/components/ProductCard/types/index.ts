@@ -1,3 +1,5 @@
+import { IGetDataArticle } from "@/redux/slices/articles/article.api";
+
 export interface Product {
   id: string;
   title: string;
@@ -18,23 +20,23 @@ export interface Product {
 }
 
 export interface ProductCardProps {
-  product: Product;
-  onAddToCart?: (product: Product) => void;
-  onViewDetails?: (product: Product) => void;
-  onToggleFavorite?: (product: Product) => void;
+  product: IGetDataArticle;
+  onAddToCart?: (product: IGetDataArticle) => void;
+  onViewDetails?: (product: IGetDataArticle) => void;
+  onToggleFavorite?: (product: IGetDataArticle) => void;
   isFavorite?: boolean;
   showActions?: boolean;
   className?: string;
 }
 
 export interface ProductGridProps {
-  products: Product[];
+  products: IGetDataArticle[];
   title?: string;
   subtitle?: string;
-  onAddToCart?: (product: Product) => void;
-  onViewDetails?: (product: Product) => void;
-  onToggleFavorite?: (product: Product) => void;
-  favoriteProducts?: string[];
+  onAddToCart?: (product: IGetDataArticle) => void;
+  onViewDetails?: (product: IGetDataArticle) => void;
+  onToggleFavorite?: (product: IGetDataArticle) => void;
+  favoriteProducts?: number[];
   loading?: boolean;
   emptyMessage?: string;
 }

@@ -5,8 +5,8 @@ import ImagePlaceholderIcon from "./icons/ImagePlaceholderIcon";
 interface ProductImageProps {
   src?: string;
   alt: string;
-  badge?: "sale" | "new" | "featured";
-  discount?: number;
+  badge?: string;
+  discount?: string;
 }
 
 const ProductImage: React.FC<ProductImageProps> = ({

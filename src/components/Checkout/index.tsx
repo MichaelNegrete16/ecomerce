@@ -4,7 +4,7 @@ import {
   selectCartItemCount,
   selectCartItems,
   selectCartTotal,
-} from "@/redux/slices/cart.selector";
+} from "@/redux/slices/cart/cart.selector";
 import useAppSelector from "@/redux/useAppSelector";
 import React, { useState } from "react";
 import styles from "./checkout.module.css";

@@ -6,14 +6,15 @@ import { formatPrice } from "@/utils/FromatPrice";
 interface ProductInfoProps {
   product: {
     badge?: string;
-    discount?: number;
+    discount?: string;
     category: string;
     title: string;
     rating: { rate: number; count: number };
-    price: number;
-    originalPrice?: number;
+    price: string;
+    originalPrice?: string;
     inStock: boolean;
     description: string;
+    stock: number;
   };
 }
 
@@ -25,7 +26,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     ));
   };
 
-  const renderBadge = (badge: string, discount?: number) => {
+  const renderBadge = (badge: string, discount?: string) => {
     const badgeClass = styles["product-badge-modal"];
     const badgeTypeClass = styles[`badge-${badge}`];
     const text =
@@ -60,11 +61,11 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
       {/* Price */}
       <div className={styles["product-price-modal"]}>
         <span className={styles["current-price-modal"]}>
-          {formatPrice(product.price)}
+          {formatPrice(parseFloat(product.price))}
         </span>
         {product.originalPrice && product.originalPrice > product.price && (
           <span className={styles["original-price-modal"]}>
-            {formatPrice(product.originalPrice)}
+            {formatPrice(parseFloat(product.originalPrice))}
           </span>
         )}
         {product.discount && (
@@ -82,6 +83,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
       >
         {product.inStock ? "✓ En stock" : "✗ Agotado"}
       </div>
+      {/*Stock*/}
+      <p className={styles["product-description-modal"]}>
+        Cantidad: {product.stock}
+      </p>
 
       {/* Description */}
       <p className={styles["product-description-modal"]}>

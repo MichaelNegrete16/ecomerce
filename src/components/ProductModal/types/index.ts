@@ -1,17 +1,17 @@
-import { Product } from "../../ProductCard/types";
+import { IGetDataArticle } from "@/redux/slices/articles/article.api";
 
 export interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  product: Product | null;
-  onAddToCart?: (product: Product, quantity: number) => void;
-  onToggleFavorite?: (product: Product) => void;
+  product: IGetDataArticle | null;
+  onAddToCart?: (product: IGetDataArticle, quantity: number) => void;
+  onToggleFavorite?: (product: IGetDataArticle) => void;
   isFavorite?: boolean;
 }
 
 export interface CartItem {
   id: string;
-  product: Product;
+  product: IGetDataArticle;
   quantity: number;
   addedAt: Date;
 }

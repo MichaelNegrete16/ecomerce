@@ -3,9 +3,9 @@ import styles from "../ProductCard.module.css";
 import { formatPrice } from "@/utils/FromatPrice";
 
 interface ProductPriceProps {
-  price: number;
-  originalPrice?: number;
-  discount?: number;
+  price: string;
+  originalPrice?: string;
+  discount?: string;
   currency?: string;
 }
 
@@ -19,11 +19,11 @@ const ProductPrice: React.FC<ProductPriceProps> = ({
     <div className={styles["product-price-container"]}>
       <div className={styles["product-price"]}>
         <span className={styles["product-price-current"]}>
-          {formatPrice(price)}
+          {formatPrice(parseFloat(price))}
         </span>
         {originalPrice && originalPrice > price && (
           <span className={styles["product-price-original"]}>
-            {formatPrice(originalPrice)}
+            {formatPrice(parseFloat(originalPrice))}
           </span>
         )}
       </div>

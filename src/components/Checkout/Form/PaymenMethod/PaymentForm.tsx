@@ -10,7 +10,7 @@ import {
   selectPrivacyAccepted,
   selectTermsAccepted,
   selectUserInfo,
-} from "@/redux/slices/cart.selector";
+} from "@/redux/slices/cart/cart.selector";
 import {
   detectCardType,
   formatCardNumber,
@@ -18,7 +18,7 @@ import {
 } from "@/utils/DetecTypeCard";
 import { initialDataPayment } from "./PaymentMethod.constant";
 import TermsAndCondition from "../TermsAndCondition";
-import { useCreateTransactionMutation } from "@/redux/slices/cart.api";
+import { useCreateTransactionMutation } from "@/redux/slices/cart/cart.api";
 
 interface PaymentFormProps {
   onBack: () => void;
@@ -102,6 +102,11 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
       const month = expiryParts[0];
       const year = expiryParts[1];
 
+      const formatArticle = items.map((item) => ({
+        id: item.product.id,
+        amount: item.quantity,
+      }));
+
       const response = await createTransaction({
         number: form.cardNumber.replace(/\s/g, ""),
         exp_month: month,
@@ -113,6 +118,7 @@ const PaymentForm = ({ onBack }: PaymentFormProps) => {
         accept_personal_auth: personalToken,
         amount_in_cents: total * 100,
         currency: "COP",
+        articles: formatArticle,
       }).unwrap();
 
       const transactionData = {

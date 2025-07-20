@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { addToCart } from "../../redux/slices/cartSlice";
+import { addToCart } from "../../redux/slices/cart/cartSlice";
 import ProductGrid from "../ProductCard/ProductGrid";
 import ProductModal from "../ProductModal";
 import { Product } from "../ProductCard/types";
 import { getProducts } from "../ProductCard/data/mockProducts";
 import useAppDispatch from "@/redux/useAppDisppatch";
+import {
+  IGetDataArticle,
+  useLazyGetArticlesQuery,
+} from "@/redux/slices/articles/article.api";
 
 const HomeAplication = () => {
   const dispatch = useAppDispatch();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<IGetDataArticle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [favoriteProducts, setFavoriteProducts] = useState<string[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
+  const [selectedProduct, setSelectedProduct] =
+    useState<IGetDataArticle | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [getAllArticles, { isLoading }] = useLazyGetArticlesQuery();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const productsData = await getProducts();
+        const productsData = await getAllArticles().unwrap();
         setProducts(productsData);
       } catch (error) {
         console.error("Error loading products:", error);
@@ -30,7 +36,7 @@ const HomeAplication = () => {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (product: Product, quantity: number = 1) => {
+  const handleAddToCart = (product: IGetDataArticle, quantity: number = 1) => {
     dispatch(addToCart({ product, quantity }));
     console.log(
       "Producto agregado al carrito:",
@@ -40,17 +46,17 @@ const HomeAplication = () => {
     );
   };
 
-  const handleAddToCartFromGrid = (product: Product) => {
+  const handleAddToCartFromGrid = (product: IGetDataArticle) => {
     handleAddToCart(product, 1);
   };
 
-  const handleViewDetails = (product: Product) => {
+  const handleViewDetails = (product: IGetDataArticle) => {
     console.log("Ver detalles:", product.title);
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
-  const handleToggleFavorite = (product: Product) => {
+  const handleToggleFavorite = (product: IGetDataArticle) => {
     setFavoriteProducts((prev) =>
       prev.includes(product.id)
         ? prev.filter((id) => id !== product.id)

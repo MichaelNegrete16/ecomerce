@@ -1,5 +1,5 @@
-import env from "../env";
-import { api } from "../RTKApi";
+import env from "../../env";
+import { api } from "../../RTKApi";
 
 export interface IGetDataMerchant {
   presigned_acceptance: {
@@ -25,6 +25,12 @@ export interface ICReateTransactionRequest {
   accept_personal_auth: string;
   amount_in_cents: number; // Monto current centavos
   currency: string; // Moneda
+  articles: IArtiBuy[];
+}
+
+export interface IArtiBuy {
+  id: number;
+  amount: number;
 }
 
 export interface IMerchantPaymentModel {

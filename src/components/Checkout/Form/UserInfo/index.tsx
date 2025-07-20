@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import styles from "../Form.module.css";
 import useAppSelector from "@/redux/useAppSelector";
-import { selectCartItems } from "@/redux/slices/cart.selector";
+import { selectCartItems } from "@/redux/slices/cart/cart.selector";
 import { initialDataUserInfo } from "./UserInfo.constant";
 import useAppDispatch from "@/redux/useAppDisppatch";
-import { setUserInfo } from "@/redux/slices/cartSlice";
+import { setUserInfo } from "@/redux/slices/cart/cartSlice";
 
 interface UserInfoFormProps {
   onContinue: () => void;

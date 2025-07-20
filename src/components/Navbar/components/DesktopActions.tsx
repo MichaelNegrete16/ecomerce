@@ -1,10 +1,10 @@
 import React from "react";
-import { toggleCart } from "../../../redux/slices/cartSlice";
+import { toggleCart } from "../../../redux/slices/cart/cartSlice";
 import styles from "../Navbar.module.css";
 import CartIcon from "./icons/CartIcon";
 import useAppDispatch from "@/redux/useAppDisppatch";
 import useAppSelector from "@/redux/useAppSelector";
-import { selectCartItemCount } from "@/redux/slices/cart.selector";
+import { selectCartItemCount } from "@/redux/slices/cart/cart.selector";
 
 const DesktopActions: React.FC = () => {
   const dispatch = useAppDispatch();

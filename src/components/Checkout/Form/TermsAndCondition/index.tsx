@@ -7,11 +7,11 @@ import {
   setPersonalToken,
   setPrivacyAccepted,
   setTermsAccepted,
-} from "@/redux/slices/cartSlice";
+} from "@/redux/slices/cart/cartSlice";
 import {
   IGetDataMerchant,
   useLazyGetMerchantDataQuery,
-} from "@/redux/slices/cart.api";
+} from "@/redux/slices/cart/cart.api";
 
 const TermsAndCondition = () => {
   const dispatch = useAppDispatch();

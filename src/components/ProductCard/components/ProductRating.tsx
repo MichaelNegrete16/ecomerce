@@ -15,7 +15,10 @@ const ProductRating: React.FC<ProductRatingProps> = ({ rating }) => {
 
   return (
     <div className={styles["product-rating"]}>
-      <div className={styles["product-stars"]}>
+      <div
+        className={styles["product-stars"]}
+        style={{ height: "10px", color: "#3b82f6" }}
+      >
         {Array.from({ length: 5 }, (_, index) => (
           <StarIcon
             key={`star-${rating.rate}-${index}`}

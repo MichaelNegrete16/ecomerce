@@ -7,7 +7,7 @@ import PlusIcon from "../components/icons/PlusIcon";
 
 interface ProductActionsProps {
   product: {
-    id: string;
+    id: number;
     title: string;
     inStock: boolean;
   };

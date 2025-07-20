@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Items.module.css";
 import useAppSelector from "@/redux/useAppSelector";
-import { selectCartItems } from "@/redux/slices/cart.selector";
+import { selectCartItems } from "@/redux/slices/cart/cart.selector";
 import { formatPrice } from "@/utils/FromatPrice";
 
 const IndexContainer = () => {
@@ -22,7 +22,7 @@ const IndexContainer = () => {
             <h4>{item.product.title}</h4>
             <p>Cantidad: {item.quantity}</p>
             <p className={styles.itemPrice}>
-              {formatPrice(item.product.price * item.quantity)}
+              {formatPrice(parseFloat(item.product.price) * item.quantity)}
             </p>
           </div>
         </div>
