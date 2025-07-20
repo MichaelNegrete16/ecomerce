@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { addToCart } from "../../redux/slices/cart/cartSlice";
 import ProductGrid from "../ProductCard/ProductGrid";
 import ProductModal from "../ProductModal";
-import { Product } from "../ProductCard/types";
-import { getProducts } from "../ProductCard/data/mockProducts";
 import useAppDispatch from "@/redux/useAppDisppatch";
 import {
   IGetDataArticle,
@@ -13,7 +11,6 @@ import {
 const HomeAplication = () => {
   const dispatch = useAppDispatch();
   const [products, setProducts] = useState<IGetDataArticle[]>([]);
-  const [loading, setLoading] = useState(true);
   const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
   const [selectedProduct, setSelectedProduct] =
     useState<IGetDataArticle | null>(null);
@@ -23,13 +20,10 @@ const HomeAplication = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true);
         const productsData = await getAllArticles().unwrap();
         setProducts(productsData);
       } catch (error) {
         console.error("Error loading products:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -79,7 +73,7 @@ const HomeAplication = () => {
         onViewDetails={handleViewDetails}
         onToggleFavorite={handleToggleFavorite}
         favoriteProducts={favoriteProducts}
-        loading={loading}
+        loading={isLoading}
         emptyMessage="No hay productos disponibles en este momento"
       />
 

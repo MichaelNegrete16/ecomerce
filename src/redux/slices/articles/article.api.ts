@@ -21,8 +21,18 @@ export interface IGetDataArticle {
   featured: boolean;
 }
 
+export interface IArticleProduct
+  extends Omit<IGetDataArticle, "id" | "inStock" | "featured"> {}
+
 export const articleApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    createArticle: builder.mutation<IGetDataArticle, IArticleProduct>({
+      query: (article) => ({
+        url: `${env.ECOMERCE_API_URL}/articles/create`,
+        method: "POST",
+        body: article,
+      }),
+    }),
     getArticles: builder.query<IGetDataArticle[], void>({
       query: () => ({
         url: `${env.ECOMERCE_API_URL}/articles`,
@@ -38,5 +48,8 @@ export const articleApi = api.injectEndpoints({
   }),
 });
 
-export const { useLazyGetArticlesQuery, useLazyGetArticleByIdQuery } =
-  articleApi;
+export const {
+  useLazyGetArticlesQuery,
+  useLazyGetArticleByIdQuery,
+  useCreateArticleMutation,
+} = articleApi;
