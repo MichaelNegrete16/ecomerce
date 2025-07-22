@@ -44,11 +44,6 @@ jobs:
           cd ../
           cp ecomerce.tar.gz ./ecomerce
 
-      - name: Comprimir artefacto para despliegue
-        run: |
-          cd deploy_package
-          tar -czf ../ecomerce.tar.gz .
-
       - name: Subir artefacto para el trabajo de despliegue
         uses: actions/upload-artifact@v4
         with:
