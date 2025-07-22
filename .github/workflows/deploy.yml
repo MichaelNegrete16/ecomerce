@@ -24,9 +24,9 @@ jobs:
 
       - name: Crear archivo .env.prod en el paquete
         run: |
-          touch .env.prod
-          echo "ECOMERCE_API_URL=${{ secrets.ECOMERCE_API_URL }}" > .env.prod
-          echo "ECOMERCE_TOKEN=${{ secrets.ECOMERCE_TOKEN }}" >> .env.prod
+          touch .env
+          echo "ECOMERCE_API_URL=${{ secrets.ECOMERCE_API_URL }}" > .env
+          echo "ECOMERCE_TOKEN=${{ secrets.ECOMERCE_TOKEN }}" >> .env
           
       - name: Instalar dependencias
         run: pnpm install
