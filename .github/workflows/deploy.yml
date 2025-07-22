@@ -44,11 +44,7 @@ jobs:
         run: |
           cd ..
           scp -P ${{ secrets.SSH_PORT }} ecomerce.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/proyet
-      - name: Testing node version
-        run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo node -v"
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo pnpm -v"
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo pm2 -v"
+          
       - name: Unzip project frontend in server
         run: |
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo unzip -o /home/proyet/ecomerce.zip -d /home/proyet"
