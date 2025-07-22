@@ -30,11 +30,11 @@ const CartSidebar: React.FC = () => {
     dispatch(closeCart());
   };
 
-  const handleUpdateQuantity = (id: string, quantity: number) => {
+  const handleUpdateQuantity = (id: number, quantity: number) => {
     dispatch(updateQuantity({ id, quantity }));
   };
 
-  const handleRemoveItem = (id: string) => {
+  const handleRemoveItem = (id: number) => {
     dispatch(removeFromCart(id));
   };
 
@@ -141,7 +141,7 @@ const CartSidebar: React.FC = () => {
                         {item.product.title}
                       </h4>
                       <p className={styles["cart-item-price"]}>
-                        {formatPrice(item.product.price)}
+                        {formatPrice(parseFloat(item.product.price))}
                       </p>
 
                       <div className={styles["cart-item-controls"]}>
