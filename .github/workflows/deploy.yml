@@ -50,10 +50,10 @@ jobs:
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo unzip -o /home/proyet/ecomerce.zip -d /home/proyet"
       - name: Install dependencies frontend
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/proyet/ecomerce && sudo pnpm i"
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/proyet/ecomerce &&  pnpm i"
       - name: Build project
         run: |
-          sshpass -p ${{ secrets.SSH_PASS }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/proyet/ecomerce && sudo pnpm run build"
+          sshpass -p ${{ secrets.SSH_PASS }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/proyet/ecomerce && pnpm run build"
       - name: Start or reload pm2 frontend
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/proyet/ecomerce && (sudo pm2 reload pm2.config.js || sudo pm2 start pm2.config.js) && sudo pm2 save"
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/proyet/ecomerce && (sudo pm2 reload pm2.config.js || pm2 start pm2.config.js) && pm2 save"
