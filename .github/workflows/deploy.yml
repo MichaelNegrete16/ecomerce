@@ -13,37 +13,36 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
+      - name: Instalar pnpm
+        run: npm install -g pnpm
+
       - name: Configurar Node.js y pnpm con caché
         uses: actions/setup-node@v4
         with:
           node-version: "22" # Asegúrate que coincida con la de tu servidor
-          cache: "npm"
-
-      - name: Instalar dependencias de pnpm
-        run: sudo npm i -g pnpm
-
-      - name: Instalar dependencias
-        run: sudo pnpm install
-
-      - name: Construir la aplicación
-        run: sudo pnpm run build
-
-      - name: Preparar paquete de despliegue
-        run: |
-          mkdir deploy_package
-          cp -r deploy_package/
-          cp package.json pnpm-lock.yaml pm2.config.js deploy_package/
-
-      - name: Instalar solo dependencias de producción
-        run: |
-          cd deploy_package
-          sudo pnpm install
+          cache: "pnpm"
 
       - name: Crear archivo .env.prod en el paquete
         run: |
           cd deploy_package
           echo "ECOMERCE_API_URL=${{ secrets.ECOMERCE_API_URL }}" > .env.prod
           echo "ECOMERCE_TOKEN=${{ secrets.ECOMERCE_TOKEN }}" >> .env.prod
+          
+      - name: Instalar dependencias
+        run: pnpm install
+ 
+      - name: Construir la aplicación
+        run: pnpm run build
+
+      - name: Comprimir artefacto para despliegue
+        run: |
+          cd ../
+          tar -czf ecomerce.tar.gz ./ecomerce
+
+      - name: copiar archivo contruido
+        run: |
+          cd ../
+          cp ecomerce.tar.gz ./ecomerce
 
       - name: Comprimir artefacto para despliegue
         run: |
