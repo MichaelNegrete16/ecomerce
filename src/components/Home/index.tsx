@@ -23,7 +23,7 @@ const HomeAplication = () => {
         const productsData = await getAllArticles().unwrap();
         setProducts(productsData);
       } catch (error) {
-        console.error("Error loading products:", error);
+        console.log("Error loading products:", error);
       }
     };
 

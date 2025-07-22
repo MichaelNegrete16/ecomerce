@@ -75,7 +75,7 @@ const AdminModule = () => {
         const transaction = await getAllTransactions().unwrap();
         setDataTransaction(transaction);
       } catch (error) {
-        console.error("Error loading products:", error);
+        console.log("Error loading products:", error);
       }
     }
   };

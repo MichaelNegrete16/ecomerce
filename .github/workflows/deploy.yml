@@ -1,0 +1,150 @@
+name: Despliegue - EcomerFront
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # --- TRABAJO 1: CONSTRUIR LA APLICACIÓN ---
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js y pnpm con caché
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22" # Asegúrate que coincida con la de tu servidor
+          cache: "npm"
+
+      - name: Instalar dependencias de pnpm
+        run: sudo npm i -g pnpm
+
+      - name: Instalar dependencias
+        run: sudo pnpm install
+
+      - name: Construir la aplicación
+        run: sudo pnpm run build
+
+      - name: Preparar paquete de despliegue
+        run: |
+          mkdir deploy_package
+          cp -r dist deploy_package/
+          cp package.json pnpm-lock.yaml pm2.config.js deploy_package/
+
+      - name: Instalar solo dependencias de producción
+        run: |
+          cd deploy_package
+          sudo pnpm install
+
+      - name: Crear archivo .env.prod en el paquete
+        run: |
+          cd deploy_package
+          echo "ECOMERCE_API_URL=${{ secrets.ECOMERCE_API_URL }}" > .env.prod
+          echo "ECOMERCE_TOKEN=${{ secrets.ECOMERCE_TOKEN }}" >> .env.prod
+
+      - name: Comprimir artefacto para despliegue
+        run: |
+          cd deploy_package
+          tar -czf ../ecomerce.tar.gz .
+
+      - name: Subir artefacto para el trabajo de despliegue
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: ecomerce.tar.gz
+
+  # --- TRABAJO 2: DESPLEGAR EN EL SERVIDOR ---
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Descargar artefacto del trabajo de construcción
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-package
+
+      - name: Copiar paquete al servidor
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "ecomerce.tar.gz"
+          target: "/home/proyet"
+
+      - name: Backup versión anterior
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            APP_DIR="/home/proyet/ecomerce"
+            BACKUP_DIR="/home/proyet/versions/ecomerce-$(date +%Y%m%d%H%M%S)"
+            if [ -d "$APP_DIR" ]; then
+              echo "INFO: Realizando backup de la versión actual en $BACKUP_DIR"
+              mv "$APP_DIR" "$BACKUP_DIR"
+            fi
+
+      - name: Crear nuevo directorio y descomprimir paquete
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            APP_DIR="/home/proyet/ecomerce"
+            mkdir -p "$APP_DIR"
+            tar -xzf "/home/proyet/ecomerce.tar.gz" -C "$APP_DIR"
+            rm "/home/proyet/ecomerce.tar.gz"
+
+      - name: Instalar dependencias de producción
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            APP_DIR="/home/proyet/ecomerce"
+            cd "$APP_DIR"
+            pnpm install
+
+      - name: Construir la aplicación
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            APP_DIR="/home/proyet/ecomerce"
+            cd "$APP_DIR"
+            pnpm run build
+
+      - name: Iniciar la aplicación con PM2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            APP_DIR="/home/proyet/ecomerce"
+            cd "$APP_DIR"
+            pm2 reload pm2.config.js
+            pm2 save
+
+      - name: Despliegue completado
+        run: echo "✅ Despliegue completado."
