@@ -5,13 +5,20 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { formatPrice } from "@/utils/FromatPrice";
 import { TransactionData } from "./Resumen.types";
+import {
+  IStatusTransactionResponse,
+  useLazyGetStatusTransactionQuery,
+} from "@/redux/slices/cart/cart.api";
 
 const ResumenPayment = () => {
   const searchParams = useSearchParams();
   const transactionId = searchParams.get("id");
   const [transactionData, setTransactionData] =
     useState<TransactionData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [dataTransactionConsulta, setDataTransactionConsulta] =
+    useState<IStatusTransactionResponse | null>(null);
+  const [getTransactionStatus, { isLoading }] =
+    useLazyGetStatusTransactionQuery();
 
   useEffect(() => {
     if (!transactionId) {
@@ -20,20 +27,22 @@ const ResumenPayment = () => {
   }, [transactionId]);
 
   useEffect(() => {
-    // Simular carga y obtener datos del localStorage
-    const timer = setTimeout(() => {
-      const savedTransaction = localStorage.getItem("lastTransaction");
-      if (savedTransaction) {
-        const data = JSON.parse(savedTransaction);
-        setTransactionData(data);
+    (async () => {
+      if (transactionId) {
+        const savedTransaction = localStorage.getItem("lastTransaction");
+        if (savedTransaction) {
+          const data = JSON.parse(savedTransaction);
+          setTransactionData(data);
+        }
+        const response = await getTransactionStatus({
+          bill_id: transactionId,
+        }).unwrap();
+        setDataTransactionConsulta(response);
       }
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    })();
   }, []);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.spinner}></div>
@@ -67,9 +76,21 @@ const ResumenPayment = () => {
   return (
     <div className={styles.container}>
       <div className={styles.successHeader}>
-        <div className={styles.successIcon}>✓</div>
-        <h1>¡Pago Exitoso!</h1>
-        <p>Tu pedido ha sido procesado correctamente</p>
+        {dataTransactionConsulta?.currentStatus === "APPROVED" ? (
+          <div className={styles.successIcon}>✓</div>
+        ) : (
+          <div className={styles.errorIcon}>✗</div>
+        )}
+        <h1>
+          {dataTransactionConsulta?.currentStatus === "APPROVED"
+            ? "¡Pago Exitoso!"
+            : "¡Pago Fallido!"}
+        </h1>
+        <p>
+          {dataTransactionConsulta?.currentStatus === "APPROVED"
+            ? "Tu pedido ha sido procesado correctamente"
+            : "Hubo un problema con tu pedido"}
+        </p>
       </div>
 
       <div className={styles.summaryCard}>
@@ -84,12 +105,6 @@ const ResumenPayment = () => {
               <span className={styles.label}>Fecha:</span>
               <span className={styles.value}>
                 {formatDate(transactionData.date)}
-              </span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.label}>Estado:</span>
-              <span className={`${styles.value} ${styles.statusCompleted}`}>
-                Completado
               </span>
             </div>
             <div className={styles.infoItem}>

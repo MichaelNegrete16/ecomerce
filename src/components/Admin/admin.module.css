@@ -400,3 +400,169 @@
     padding: 2rem;
   }
 }
+
+/* Transactions Section */
+.transactionsSection {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+.transactionsSection h2 {
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.noTransactions {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  padding: 2rem;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.transactionsTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.transactionsTable th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+.transactionsTable td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: top;
+  font-size: 0.875rem;
+}
+
+.transactionsTable tr:hover {
+  background: #f9fafb;
+}
+
+.transactionsTable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Status Styles */
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.declined {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.unknown {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Table Cell Specific Styles */
+.reference {
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  color: #6b7280;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #6b7280;
+}
+
+.amount {
+  font-weight: 600;
+  color: #059669;
+  text-align: right;
+}
+
+.email {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #6b7280;
+}
+
+.billId {
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  color: #6b7280;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date {
+  color: #6b7280;
+  white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  .tableContainer {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .transactionsTable {
+    min-width: 600px;
+  }
+
+  .transactionsTable th,
+  .transactionsTable td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .reference,
+  .message,
+  .email,
+  .billId {
+    max-width: 80px;
+  }
+}

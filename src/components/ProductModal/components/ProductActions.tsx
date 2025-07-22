@@ -10,6 +10,7 @@ interface ProductActionsProps {
     id: number;
     title: string;
     inStock: boolean;
+    stock: number;
   };
   quantity: number;
   isFavorite: boolean;
@@ -26,13 +27,15 @@ const ProductActions: React.FC<ProductActionsProps> = ({
   onAddToCart,
   onToggleFavorite,
 }) => {
+  const maxQuantity = Math.min(product.stock, 10); // Limitar por stock o 10, lo que sea menor
+
   return (
     <div className={styles["product-actions-section"]}>
       {/* Quantity Selector */}
-      {product.inStock && (
+      {product.inStock && product.stock > 0 && (
         <div className={styles["quantity-section"]}>
           <label className={styles["quantity-label"]} htmlFor="quantity-input">
-            Cantidad:
+            Cantidad: (Disponible: {product.stock})
           </label>
           <div className={styles["quantity-selector"]}>
             <button
@@ -49,17 +52,22 @@ const ProductActions: React.FC<ProductActionsProps> = ({
               type="number"
               className={styles["quantity-input"]}
               value={quantity}
-              onChange={(e) =>
-                onQuantityChange(parseInt(e.target.value, 10) || 1)
-              }
+              onChange={(e) => {
+                const newQuantity = parseInt(e.target.value, 10) || 1;
+                const validQuantity = Math.min(
+                  Math.max(newQuantity, 1),
+                  maxQuantity
+                );
+                onQuantityChange(validQuantity);
+              }}
               min="1"
-              max="10"
+              max={maxQuantity}
               aria-label="Cantidad del producto"
             />
             <button
               className={styles["quantity-button"]}
               onClick={() => onQuantityChange(quantity + 1)}
-              disabled={quantity >= 10}
+              disabled={quantity >= maxQuantity}
               type="button"
               aria-label="Aumentar cantidad"
             >
@@ -74,7 +82,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
         <button
           className={styles["add-to-cart-modal"]}
           onClick={onAddToCart}
-          disabled={!product.inStock}
+          disabled={!product.inStock || product.stock === 0}
           type="button"
         >
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +93,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
               d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 13M7 13l2.5 13m0 0h10m-10 0L19 26"
             />
           </svg>
-          {product.inStock
+          {product.inStock && product.stock > 0
             ? `Agregar al carrito (${quantity})`
             : "Producto agotado"}
         </button>

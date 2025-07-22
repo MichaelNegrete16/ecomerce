@@ -47,11 +47,55 @@ export interface IMerchantPaymentModel {
   created_at?: Date;
 }
 
+export interface IStatusTransactionResponse {
+  currentStatus: string;
+  hasChanged: boolean;
+  originalTransaction: {
+    id: number;
+    reference: string;
+    status: string;
+    status_message: string;
+    bill_id: string;
+  };
+}
+
+export interface IGetStatusTransaction {
+  bill_id: string;
+}
+
+export interface IGetAllTransactions {
+  id: number;
+  reference: string;
+  status: string;
+  status_message: string | null;
+  amount_in_cents: string;
+  currency: string;
+  customer_email: string | null;
+  payment_link_id: string | null;
+  bill_id: string | null;
+  created_at: string | null;
+}
+
 export const cartApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getMerchantData: builder.query<IGetDataMerchant, void>({
       query: () => ({
         url: `${env.ECOMERCE_API_URL}/merchants/generate`,
+        method: "GET",
+      }),
+    }),
+    getStatusTransaction: builder.query<
+      IStatusTransactionResponse,
+      IGetStatusTransaction
+    >({
+      query: ({ bill_id }) => ({
+        url: `${env.ECOMERCE_API_URL}/merchants/transaction/status/${bill_id}`,
+        method: "GET",
+      }),
+    }),
+    getAllTransactions: builder.query<IGetAllTransactions[], void>({
+      query: () => ({
+        url: `${env.ECOMERCE_API_URL}/merchants/transactions/pending`,
         method: "GET",
       }),
     }),
@@ -68,5 +112,9 @@ export const cartApi = api.injectEndpoints({
   }),
 });
 
-export const { useLazyGetMerchantDataQuery, useCreateTransactionMutation } =
-  cartApi;
+export const {
+  useLazyGetMerchantDataQuery,
+  useCreateTransactionMutation,
+  useLazyGetStatusTransactionQuery,
+  useLazyGetAllTransactionsQuery,
+} = cartApi;

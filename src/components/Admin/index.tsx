@@ -5,6 +5,10 @@ import {
 } from "@/redux/slices/articles/article.api";
 import React, { useEffect, useState } from "react";
 import styles from "./admin.module.css";
+import {
+  IGetAllTransactions,
+  useLazyGetAllTransactionsQuery,
+} from "@/redux/slices/cart/cart.api";
 
 interface LoginForm {
   username: string;
@@ -31,6 +35,7 @@ const AdminModule = () => {
   });
   const [products, setProducts] = useState<IGetDataArticle[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showTransactions, setShowTransactions] = useState(false);
   const [productForm, setProductForm] = useState<ProductForm>({
     title: "",
     description: "",
@@ -42,8 +47,12 @@ const AdminModule = () => {
     badge: "",
     discount: 0,
   });
+  const [dataTransaction, setDataTransaction] = useState<IGetAllTransactions[]>(
+    []
+  );
   const [getAllArticles] = useLazyGetArticlesQuery();
   const [createArticle] = useCreateArticleMutation();
+  const [getAllTransactions] = useLazyGetAllTransactionsQuery();
 
   useEffect(() => {
     // Verificar si ya está autenticado
@@ -63,6 +72,8 @@ const AdminModule = () => {
       try {
         const productsData = await getAllArticles().unwrap();
         setProducts(productsData);
+        const transaction = await getAllTransactions().unwrap();
+        setDataTransaction(transaction);
       } catch (error) {
         console.error("Error loading products:", error);
       }
@@ -217,6 +228,12 @@ const AdminModule = () => {
             className={styles.createButton}
           >
             {showCreateForm ? "Cancelar" : "Crear Producto"}
+          </button>
+          <button
+            onClick={() => setShowTransactions(!showTransactions)}
+            className={styles.createButton}
+          >
+            {showTransactions ? "Ocultar Transacciones" : "Ver Transacciones"}
           </button>
           <button onClick={handleLogout} className={styles.logoutButton}>
             Cerrar Sesión
@@ -373,6 +390,92 @@ const AdminModule = () => {
               Crear Producto
             </button>
           </form>
+        </div>
+      )}
+
+      {showTransactions && (
+        <div className={styles.transactionsSection}>
+          <h2>Transacciones ({dataTransaction.length})</h2>
+          {dataTransaction.length === 0 ? (
+            <p className={styles.noTransactions}>
+              No hay transacciones registradas
+            </p>
+          ) : (
+            <div className={styles.tableContainer}>
+              <table className={styles.transactionsTable}>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Referencia</th>
+                    <th>Estado</th>
+                    <th>Mensaje</th>
+                    <th>Monto</th>
+                    <th>Moneda</th>
+                    <th>Email Cliente</th>
+                    <th>Bill ID</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataTransaction.map((transaction) => {
+                    let statusClass = styles.unknown;
+                    if (transaction.status === "APPROVED") {
+                      statusClass = styles.approved;
+                    } else if (transaction.status === "PENDING") {
+                      statusClass = styles.pending;
+                    } else if (transaction.status === "ERROR") {
+                      statusClass = styles.declined;
+                    }
+
+                    return (
+                      <tr key={transaction.id}>
+                        <td className={styles.reference}>{transaction.id}</td>
+                        <td className={styles.reference}>
+                          {transaction.reference}
+                        </td>
+                        <td>
+                          <span className={`${styles.status} ${statusClass}`}>
+                            {transaction.status}
+                          </span>
+                        </td>
+                        <td className={styles.message}>
+                          {transaction.status_message || "N/A"}
+                        </td>
+                        <td className={styles.amount}>
+                          $
+                          {(
+                            parseInt(transaction.amount_in_cents) / 100
+                          ).toFixed(2)}
+                        </td>
+                        <td className={styles.reference}>
+                          {transaction.currency}
+                        </td>
+                        <td className={styles.email}>
+                          {transaction.customer_email || "N/A"}
+                        </td>
+                        <td className={styles.billId}>
+                          {transaction.bill_id || "N/A"}
+                        </td>
+                        <td className={styles.date}>
+                          {transaction.created_at
+                            ? new Date(
+                                transaction.created_at
+                              ).toLocaleDateString("es-ES", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                            : "N/A"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 

@@ -33,17 +33,31 @@ const cartSlice = createSlice({
       action: PayloadAction<{ product: IGetDataArticle; quantity: number }>
     ) => {
       const { product, quantity } = action.payload;
+
+      // Validar que el producto esté en stock
+      if (!product.inStock || product.stock === 0) {
+        return;
+      }
+
       const existingItem = state.items.find(
         (item) => item.product.id === product.id
       );
 
       if (existingItem) {
-        existingItem.quantity += quantity;
+        // Validar que no se exceda el stock disponible
+        const newQuantity = existingItem.quantity + quantity;
+        if (newQuantity <= product.stock) {
+          existingItem.quantity = newQuantity;
+        } else {
+          existingItem.quantity = product.stock;
+        }
       } else {
+        // Validar que la cantidad no exceda el stock
+        const validQuantity = Math.min(quantity, product.stock);
         state.items.push({
           id: parseFloat(`${product.id}-${Date.now()}`), // Unique ID based on product ID and timestamp
           product,
-          quantity,
+          quantity: validQuantity,
           addedAt: new Date(),
         });
       }
@@ -69,7 +83,9 @@ const cartSlice = createSlice({
       const item = state.items.find((item) => item.id === id);
 
       if (item && quantity > 0) {
-        item.quantity = quantity;
+        // Validar que no se exceda el stock disponible
+        const validQuantity = Math.min(quantity, item.product.stock);
+        item.quantity = validQuantity;
       } else if (item && quantity <= 0) {
         state.items = state.items.filter((item) => item.id !== id);
       }

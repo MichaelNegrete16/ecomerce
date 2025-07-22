@@ -57,13 +57,14 @@ const ProductModal: React.FC<ProductModalProps> = ({
   };
 
   const handleAddToCart = () => {
-    if (onAddToCart && product.inStock) {
+    if (onAddToCart && product.inStock && product.stock > 0) {
       onAddToCart(product, quantity);
     }
   };
 
   const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= 10) {
+    const maxQuantity = Math.min(product.stock, 10);
+    if (newQuantity >= 1 && newQuantity <= maxQuantity) {
       setQuantity(newQuantity);
     }
   };
