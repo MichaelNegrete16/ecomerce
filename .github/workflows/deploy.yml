@@ -50,16 +50,15 @@ jobs:
           name: deployment-package
           path: ecomerce.tar.gz
 
-  # --- TRABAJO 2: DESPLEGAR EN EL SERVIDOR ---
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build # Este trabajo depende de que 'build' termine correctamente
     steps:
       - name: Descargar artefacto del trabajo de construcción
         uses: actions/download-artifact@v4
         with:
           name: deployment-package
-
+ 
       - name: Copiar paquete al servidor
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -69,8 +68,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: "ecomerce.tar.gz"
           target: "/home/proyet"
-
-      - name: Backup versión anterior
+ 
+      - name: Desplegar y reiniciar en el servidor
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -78,15 +77,15 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            set -e
-            APP_DIR="/home/proyet/ecomerce"
-            BACKUP_DIR="/home/proyet/versions/ecomerce-$(date +%Y%m%d%H%M%S)"
-            if [ -d "$APP_DIR" ]; then
-              echo "INFO: Realizando backup de la versión actual en $BACKUP_DIR"
-              mv "$APP_DIR" "$BACKUP_DIR"
-            fi
-
-      - name: Crear nuevo directorio y descomprimir paquete
+            set -e # Terminar el script si algún comando falla
+            
+            # 1. Crear el directorio de la nueva aplicación y descomprimir
+            echo "INFO: Creando nuevo directorio y descomprimiendo..."
+            sudo rm -rf /home/proyet/ecomerce
+            tar -xzf /home/proyet/ecomerce.tar.gz -C /home/proyet/
+            sudo rm -rf /home/proyet/ecomerce.tar.gz
+            
+      - name: Levantar pm2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -94,51 +93,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            set -e
-            APP_DIR="/home/proyet/ecomerce"
-            mkdir -p "$APP_DIR"
-            tar -xzf "/home/proyet/ecomerce.tar.gz" -C "$APP_DIR"
-            rm "/home/proyet/ecomerce.tar.gz"
-
-      - name: Instalar dependencias de producción
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
-            APP_DIR="/home/proyet/ecomerce"
-            cd "$APP_DIR"
-            pnpm install
-
-      - name: Construir la aplicación
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
-            APP_DIR="/home/proyet/ecomerce"
-            cd "$APP_DIR"
-            pnpm run build
-
-      - name: Iniciar la aplicación con PM2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
-            APP_DIR="/home/proyet/ecomerce"
-            cd "$APP_DIR"
-            pm2 reload pm2.config.js
-            pm2 save
-
-      - name: Despliegue completado
-        run: echo "✅ Despliegue completado."
+           # 2. Reiniciar el servicio con PM2
+             echo "INFO: Recargando la aplicación con PM2..."
+             cd /home/proyet/ecomerce
+             # Intenta recargar la app; si no existe, la inicia.
+             # Asegúrate que 'pm2.config.js' esté configurado para usar sudo si es necesario.
+             pm2 reload pm2.config.js
+            
+             echo "✅ Despliegue completado."
