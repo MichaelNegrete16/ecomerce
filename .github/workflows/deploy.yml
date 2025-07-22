@@ -31,7 +31,7 @@ jobs:
       - name: Preparar paquete de despliegue
         run: |
           mkdir deploy_package
-          cp -r dist deploy_package/
+          cp -r deploy_package/
           cp package.json pnpm-lock.yaml pm2.config.js deploy_package/
 
       - name: Instalar solo dependencias de producción
