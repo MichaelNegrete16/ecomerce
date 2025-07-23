@@ -50,7 +50,36 @@ Un proyecto completo de e-commerce desarrollado con **Next.js 14**, **Redux Tool
    yarn install
    ```
 
-3. **Ejecutar el servidor de desarrollo**
+3. **Configurar variables de entorno**
+
+## 🔐 Variables de Entorno
+
+### Configuración Requerida
+
+El proyecto requiere las siguientes variables de entorno en un archivo `.env` en la raíz:
+
+```bash
+# API del E-commerce
+NEXT_PUBLIC_ECOMERCE_API_URL=http://localhost:3000/api
+
+```
+
+### Descripción de Variables
+
+| Variable                       | Descripción                       | Ejemplo                     | Requerida |
+| ------------------------------ | --------------------------------- | --------------------------- | --------- |
+| `NEXT_PUBLIC_ECOMERCE_API_URL` | URL base de la API del e-commerce | `http://localhost:3000/api` | ✅ Sí     |
+
+### Notas Importantes
+
+- ✅ Variables con `NEXT_PUBLIC_` son accesibles en el cliente
+- ❌ **Nunca** incluir el archivo `.env` en Git
+- 🔒 Para claves sensibles, usar variables de servidor (sin `NEXT_PUBLIC_`)
+- 📝 Actualizar `.env.example` con nuevas variables para el equipo
+
+````
+
+4. **Ejecutar el servidor de desarrollo**
 
    ```bash
    npm run dev
@@ -58,9 +87,9 @@ Un proyecto completo de e-commerce desarrollado con **Next.js 14**, **Redux Tool
    pnpm dev
    # o
    yarn dev
-   ```
+````
 
-4. **Abrir en el navegador**
+5. **Abrir en el navegador**
    ```
    http://localhost:4001
    ```
