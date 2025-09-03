@@ -32,16 +32,17 @@ const HomeAplication = () => {
 
   const handleAddToCart = (product: IGetDataArticle, quantity: number = 1) => {
     dispatch(addToCart({ product, quantity }));
-    console.log(
-      "Producto agregado al carrito:",
-      product.title,
-      "Cantidad:",
-      quantity
-    );
   };
 
   const handleAddToCartFromGrid = (product: IGetDataArticle) => {
-    handleAddToCart(product, 1);
+    const iva = (parseFloat(product.price) * 19) / 100;
+    const ITMS = (parseFloat(product.price) * 10) / 100;
+    const totalProducto = parseFloat(product.price) + iva + ITMS;
+    const formatProduct: IGetDataArticle = {
+      ...product,
+      originalPrice: totalProducto.toString(),
+    };
+    handleAddToCart(formatProduct, 1);
   };
 
   const handleViewDetails = (product: IGetDataArticle) => {

@@ -129,12 +129,6 @@ const ResumenPayment = () => {
                 <div className={styles.itemDetails}>
                   <h3>{item.product.title}</h3>
                   <p>Cantidad: {item.quantity}</p>
-                  <p className={styles.itemPrice}>
-                    {formatPrice(item.product.price)}
-                  </p>
-                </div>
-                <div className={styles.itemTotal}>
-                  {formatPrice(item.product.price * item.quantity)}
                 </div>
               </div>
             ))}
@@ -143,19 +137,29 @@ const ResumenPayment = () => {
           <div className={styles.totalSection}>
             <div className={styles.totalRow}>
               <span>Subtotal:</span>
+              <span>
+                {formatPrice(
+                  transactionData.amount -
+                    (transactionData.amount * 0.19 +
+                      transactionData.amount * 0.1)
+                )}
+              </span>
+            </div>
+            <div className={styles.totalRow}>
+              <span>Impuestos (19%):</span>
+              <span>{formatPrice(transactionData.amount * 0.19)}</span>
+            </div>
+            <div className={styles.totalRow}>
+              <span>ITMS (10%):</span>
+              <span>{formatPrice(transactionData.amount * 0.1)}</span>
+            </div>
+            <div className={styles.totalRow}>
+              <span>Total:</span>
               <span>{formatPrice(transactionData.amount)}</span>
             </div>
             <div className={styles.totalRow}>
               <span>Envío:</span>
               <span>Gratis</span>
-            </div>
-            <div className={styles.totalRow}>
-              <span>Impuestos (16%):</span>
-              <span>{formatPrice(transactionData.amount * 0.16)}</span>
-            </div>
-            <div className={`${styles.totalRow} ${styles.finalTotal}`}>
-              <span>Total:</span>
-              <span>{formatPrice(transactionData.amount * 1.16)}</span>
             </div>
           </div>
         </div>

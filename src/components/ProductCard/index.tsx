@@ -26,19 +26,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       <div className={styles["product-content"]}>
         <div className={styles["product-category"]}>{product.category}</div>
-
         <h3 className={styles["product-title"]}>{product.title}</h3>
-
         <p className={styles["product-description"]}>{product.description}</p>
-
         <ProductRating rating={product.rating} />
-
         <ProductPrice
           price={product.price}
           originalPrice={product.originalPrice}
           discount={product.discount}
         />
-
         <ProductActions
           product={product}
           onAddToCart={onAddToCart}

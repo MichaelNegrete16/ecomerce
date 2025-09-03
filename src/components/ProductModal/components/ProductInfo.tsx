@@ -19,6 +19,9 @@ interface ProductInfoProps {
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+  const iva = (parseFloat(product.price) * 19) / 100;
+  const ITMS = (parseFloat(product.price) * 10) / 100;
+  const totalProducto = parseFloat(product.price) + iva + ITMS;
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
     return Array.from({ length: 5 }, (_, index) => (
@@ -34,6 +37,8 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
     return <span className={`${badgeClass} ${badgeTypeClass}`}>{text}</span>;
   };
+
+  console.log(totalProducto, "product.originalPrice", iva, "iva");
 
   return (
     <div className={styles["product-info"]}>
@@ -58,16 +63,19 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         </span>
       </div>
 
+      {/* Iva */}
+      <div style={{ fontSize: "14px", color: "#666" }}>
+        Iva: {formatPrice(iva)}
+      </div>
+      <div style={{ fontSize: "14px", color: "#666" }}>
+        ITMS: {formatPrice(ITMS)}
+      </div>
+
       {/* Price */}
       <div className={styles["product-price-modal"]}>
         <span className={styles["current-price-modal"]}>
-          {formatPrice(parseFloat(product.price))}
+          {formatPrice(totalProducto)}
         </span>
-        {product.originalPrice && product.originalPrice > product.price && (
-          <span className={styles["original-price-modal"]}>
-            {formatPrice(parseFloat(product.originalPrice))}
-          </span>
-        )}
         {product.discount && (
           <span className={styles["discount-badge-modal"]}>
             -{product.discount}%

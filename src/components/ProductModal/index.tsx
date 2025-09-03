@@ -95,7 +95,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
           <div>
             <ProductInfo product={product} />
-
             <ProductActions
               product={product}
               quantity={quantity}

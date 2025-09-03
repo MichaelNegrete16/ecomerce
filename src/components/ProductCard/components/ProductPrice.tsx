@@ -15,18 +15,18 @@ const ProductPrice: React.FC<ProductPriceProps> = ({
   discount,
   currency = "$",
 }) => {
+  const iva = (parseFloat(price) * 19) / 100;
+  const ITMS = (parseFloat(price) * 10) / 100;
+  const totalProducto = parseFloat(price) + iva + ITMS;
+
   return (
     <div className={styles["product-price-container"]}>
       <div className={styles["product-price"]}>
         <span className={styles["product-price-current"]}>
-          {formatPrice(parseFloat(price))}
+          {formatPrice(totalProducto)}
         </span>
-        {originalPrice && originalPrice > price && (
-          <span className={styles["product-price-original"]}>
-            {formatPrice(parseFloat(originalPrice))}
-          </span>
-        )}
       </div>
+
       {discount && (
         <span className={styles["product-discount"]}>-{discount}%</span>
       )}

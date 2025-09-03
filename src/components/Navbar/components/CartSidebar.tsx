@@ -82,24 +82,50 @@ const CartSidebar: React.FC = () => {
           ) : (
             <>
               <div className={styles["cart-items"]}>
-                {items.map((item) => (
-                  <div key={item.id} className={styles["cart-item"]}>
-                    <div className={styles["cart-item-image"]}>
-                      {item.product.image ? (
-                        <img
-                          src={item.product.image}
-                          alt={item.product.title}
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                            const placeholder = e.currentTarget
-                              .nextElementSibling as HTMLElement;
-                            if (placeholder) {
-                              placeholder.style.display = "flex";
-                            }
+                {items.map((item) => {
+                  const iva = (parseFloat(item.product.price) * 19) / 100;
+                  const ITMS = (parseFloat(item.product.price) * 10) / 100;
+                  const totalProducto =
+                    parseFloat(item.product.price) + iva + ITMS;
+                  return (
+                    <div key={item.id} className={styles["cart-item"]}>
+                      <div className={styles["cart-item-image"]}>
+                        {item.product.image ? (
+                          <img
+                            src={item.product.image}
+                            alt={item.product.title}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              const placeholder = e.currentTarget
+                                .nextElementSibling as HTMLElement;
+                              if (placeholder) {
+                                placeholder.style.display = "flex";
+                              }
+                            }}
+                          />
+                        ) : (
+                          <div className={styles["cart-item-placeholder"]}>
+                            <svg
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                        )}
+
+                        <div
+                          className={styles["cart-item-placeholder"]}
+                          style={{
+                            display: item.product.image ? "none" : "flex",
                           }}
-                        />
-                      ) : (
-                        <div className={styles["cart-item-placeholder"]}>
+                        >
                           <svg
                             fill="none"
                             stroke="currentColor"
@@ -113,87 +139,67 @@ const CartSidebar: React.FC = () => {
                             />
                           </svg>
                         </div>
-                      )}
-
-                      <div
-                        className={styles["cart-item-placeholder"]}
-                        style={{
-                          display: item.product.image ? "none" : "flex",
-                        }}
-                      >
-                        <svg
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
                       </div>
-                    </div>
 
-                    <div className={styles["cart-item-details"]}>
-                      <h4 className={styles["cart-item-title"]}>
-                        {item.product.title}
-                      </h4>
-                      <p className={styles["cart-item-price"]}>
-                        {formatPrice(parseFloat(item.product.price))}
-                      </p>
+                      <div className={styles["cart-item-details"]}>
+                        <h4 className={styles["cart-item-title"]}>
+                          {item.product.title}
+                        </h4>
+                        <p className={styles["cart-item-price"]}>
+                          {formatPrice(totalProducto)}
+                        </p>
 
-                      <div className={styles["cart-item-controls"]}>
-                        <div className={styles["quantity-controls"]}>
+                        <div className={styles["cart-item-controls"]}>
+                          <div className={styles["quantity-controls"]}>
+                            <button
+                              onClick={() =>
+                                handleUpdateQuantity(item.id, item.quantity - 1)
+                              }
+                              disabled={item.quantity <= 1}
+                              type="button"
+                              aria-label="Disminuir cantidad"
+                            >
+                              <MinusIcon />
+                            </button>
+                            <span className={styles["quantity-display"]}>
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() =>
+                                handleUpdateQuantity(item.id, item.quantity + 1)
+                              }
+                              disabled={item.quantity >= 10}
+                              type="button"
+                              aria-label="Aumentar cantidad"
+                            >
+                              <PlusIcon />
+                            </button>
+                          </div>
+
                           <button
-                            onClick={() =>
-                              handleUpdateQuantity(item.id, item.quantity - 1)
-                            }
-                            disabled={item.quantity <= 1}
+                            className={styles["remove-item"]}
+                            onClick={() => handleRemoveItem(item.id)}
                             type="button"
-                            aria-label="Disminuir cantidad"
+                            aria-label="Eliminar producto"
                           >
-                            <MinusIcon />
-                          </button>
-                          <span className={styles["quantity-display"]}>
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() =>
-                              handleUpdateQuantity(item.id, item.quantity + 1)
-                            }
-                            disabled={item.quantity >= 10}
-                            type="button"
-                            aria-label="Aumentar cantidad"
-                          >
-                            <PlusIcon />
+                            <svg
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
                           </button>
                         </div>
-
-                        <button
-                          className={styles["remove-item"]}
-                          onClick={() => handleRemoveItem(item.id)}
-                          type="button"
-                          aria-label="Eliminar producto"
-                        >
-                          <svg
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className={styles["cart-footer"]}>

@@ -17,10 +17,12 @@ const initialState = {
 
 const calculateTotals = (items: CartItem[]) => {
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-  const total = items.reduce(
-    (total, item) => total + parseFloat(item.product.price) * item.quantity,
-    0
-  );
+  const total = items.reduce((total, item) => {
+    const iva = (parseFloat(item.product.price) * 19) / 100;
+    const ITMS = (parseFloat(item.product.price) * 10) / 100;
+    const totalProducto = parseFloat(item.product.price) + iva + ITMS;
+    return total + totalProducto * item.quantity;
+  }, 0);
   return { itemCount, total };
 };
 
